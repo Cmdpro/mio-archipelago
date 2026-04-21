@@ -1,0 +1,25 @@
+# Build directories
+build/
+install/
+out/
+x64/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build artifacts
+*.obj
+*.exp
+*.pdb
+*.ilk
+*.dll
+*.exe
+
+# Vcpkg
+vcpkg_installed/
+
+# Custom
+.vscode/
+header.txt

@@ -1,0 +1,8 @@
+{
+    "id": "io.github.cmdpro.archipelago",
+    "name": "Archipelago",
+    "main": "archipelago.dll",
+    "dependencies": [
+        "io.github.mio-modding.mio-modding-api"
+    ]
+}
