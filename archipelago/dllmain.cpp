@@ -77,25 +77,18 @@ NOINLINE void __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* it
 }
 void* insideGlitchAddr;
 void* exitGlitchAddr;
-uintptr_t gameAddr;
 NOINLINE void __cdecl GlitchStateUpdateHook() {
     if (ModAPI::Util::ReadMemoryTyped<uint8_t>(insideGlitchAddr)) {
-        ModAPI::Util::CallAssembly<void>(exitGlitchAddr, gameAddr);
+        ModAPI::Util::CallAssembly<void>(exitGlitchAddr, ModAPI::Addresses::g_GameAddr);
     }
     typedef int func();
     func* trampoline = (func*)(glitch_state_update_trampoline);
     int i = trampoline();
 }
 extern "C" __declspec(dllexport) void ModInit(char* id) {
-    HMODULE hModule = GetModuleHandleA("mio.exe");
-    if (!hModule) {
-        ModAPI::Util::LogMessage(modId, "ERROR: Failed to get mio.exe module handle!");
-        return;
-    }
-    LogMessage("Loaded Archipelago");
-    baseAddr = (uintptr_t)hModule;
-
     modId = id;
+
+    baseAddr = ModAPI::Addresses::g_BaseAddr;
     AddHasOverride("UNLOCK:HOOK", CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", "UNLOCK:SPIDER"));
     AddLootOverride("UNLOCK:HOOK", CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", "UNLOCK:SPIDER"));
 
@@ -112,8 +105,11 @@ extern "C" __declspec(dllexport) void ModInit(char* id) {
     glitch_state_update_hook_detour.hook();
 
     exitGlitchAddr = (void*)(baseAddr + ModAPI::Util::GetMethodOffset("public: void __cdecl Game::exit_glitch(void)"));
-    gameAddr = baseAddr + ModAPI::Util::GetStaticVariableOffset("game");
-    insideGlitchAddr = (void*)(gameAddr + ModAPI::Util::GetVariableOffset("Game", "glitch") + ModAPI::Util::GetVariableOffset("Game::Glitch", "_inside"));
+    insideGlitchAddr = (void*)((uintptr_t)ModAPI::Addresses::g_GameAddr + ModAPI::Util::GetVariableOffset("Game", "glitch") + ModAPI::Util::GetVariableOffset("Game::Glitch", "_inside"));
+
+    LogMessage("Loaded Archipelago");
+
+    LogMessage(std::to_string(baseAddr).c_str());
 }
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
