@@ -31,6 +31,7 @@ struct CallbackOverride {
 
 uintptr_t loot_trampoline = NULL;
 uintptr_t mio_has_trampoline = NULL;
+uintptr_t glitch_state_update_trampoline = NULL;
 std::map<std::string, std::list<CallbackOverride>> hasOverrides;
 std::map<std::string, std::list<CallbackOverride>> lootOverrides;
 
@@ -74,6 +75,17 @@ NOINLINE void __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* it
     func* trampoline = (func*)(mio_has_trampoline);
     int i = trampoline(mio, id);
 }
+void* insideGlitchAddr;
+void* exitGlitchAddr;
+uintptr_t gameAddr;
+NOINLINE void __cdecl GlitchStateUpdateHook() {
+    if (ModAPI::Util::ReadMemoryTyped<uint8_t>(insideGlitchAddr)) {
+        ModAPI::Util::CallAssembly<void>(exitGlitchAddr, gameAddr);
+    }
+    typedef int func();
+    func* trampoline = (func*)(glitch_state_update_trampoline);
+    int i = trampoline();
+}
 extern "C" __declspec(dllexport) void ModInit(char* id) {
     HMODULE hModule = GetModuleHandleA("mio.exe");
     if (!hModule) {
@@ -91,9 +103,17 @@ extern "C" __declspec(dllexport) void ModInit(char* id) {
     static PLH::NatDetour loot_hook_detour = PLH::NatDetour(lootAddr, (uintptr_t)LootHook, &loot_trampoline);
     loot_hook_detour.hook();
 
-    uintptr_t mioHasAddr = baseAddr+ModAPI::Util::GetMethodOffset("public: bool __cdecl Mio::has(struct String const &)");
+    uintptr_t mioHasAddr = baseAddr + ModAPI::Util::GetMethodOffset("public: bool __cdecl Mio::has(struct String const &)");
     static PLH::NatDetour mio_has_hook_detour = PLH::NatDetour(mioHasAddr, (uintptr_t)MioHasHook, &mio_has_trampoline);
     mio_has_hook_detour.hook();
+
+    uintptr_t glitchStateUpdateAddr = baseAddr + ModAPI::Util::GetMethodOffset("void __cdecl glitch_state_update(void)");
+    static PLH::NatDetour glitch_state_update_hook_detour = PLH::NatDetour(glitchStateUpdateAddr, (uintptr_t)GlitchStateUpdateHook, &glitch_state_update_trampoline);
+    glitch_state_update_hook_detour.hook();
+
+    exitGlitchAddr = (void*)(baseAddr + ModAPI::Util::GetMethodOffset("public: void __cdecl Game::exit_glitch(void)"));
+    gameAddr = baseAddr + ModAPI::Util::GetStaticVariableOffset("game");
+    insideGlitchAddr = (void*)(gameAddr + ModAPI::Util::GetVariableOffset("Game", "glitch") + ModAPI::Util::GetVariableOffset("Game::Glitch", "_inside"));
 }
 BOOL APIENTRY DllMain(HMODULE hModule,
     DWORD  ul_reason_for_call,
