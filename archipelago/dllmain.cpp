@@ -89,7 +89,8 @@ extern "C" __declspec(dllexport) void ModInit(char* id) {
     modId = id;
 
     baseAddr = ModAPI::Addresses::g_BaseAddr;
-    AddHasOverride("UNLOCK:HOOK", CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", "UNLOCK:SPIDER"));
+AddHasOverride("UNLOCK:HOOK", CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", "UNLOCK:SPIDER"));
+AddHasOverride("UNLOCK:HOOK", CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", "UNLOCK:SPIDER"));
     AddLootOverride("UNLOCK:HOOK", CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", "UNLOCK:SPIDER"));
 
     uintptr_t lootAddr = baseAddr+ModAPI::Util::GetMethodOffset("public: struct Save_entry * __cdecl Game::loot(struct String const &,int,enum Loot_flags)");
