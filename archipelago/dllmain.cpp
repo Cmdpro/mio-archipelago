@@ -4,6 +4,7 @@
 #include "mio-modding-api.h"
 #include "polyhook2/Detour/NatDetour.hpp"
 #include "loot-overrides.h"
+#include "mio-archipelago.h"
 
 char* modId;
 void LogMessage(const char* message) {
@@ -12,6 +13,8 @@ void LogMessage(const char* message) {
 
 extern "C" __declspec(dllexport) void ModInit(char* id) {
     modId = id;
+
+    InitializeHooks();
 
     LogMessage("Loaded Archipelago");
 }
