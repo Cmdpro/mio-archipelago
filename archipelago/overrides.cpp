@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include "mio-modding-api.h"
 #include "loot-overrides.h"
-#include <map>
 
 std::map<std::string, std::list<CallbackOverride>> hasOverrides;
 std::map<std::string, std::list<CallbackOverride>> lootOverrides;

@@ -13,10 +13,45 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Archipelago Files">
+      <UniqueIdentifier>{2d6af637-ed39-4db0-b574-c8c3507f8c28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="hooks.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="overrides.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="setup-overrides.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subprojects\APCpp\Archipelago_Gifting.cpp">
+      <Filter>Archipelago Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subprojects\APCpp\Archipelago.cpp">
+      <Filter>Archipelago Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subprojects\APCpp\Archipelago_DataStorageSim.cpp">
+      <Filter>Archipelago Files</Filter>
+    </ClCompile>
+    <ClCompile Include="setup-ids.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="setup-locations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mio-archipelago.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="loot-overrides.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

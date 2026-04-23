@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <mio-modding-api.h>
+#include <map>
 
 struct CallbackOverride {
     uintptr_t methodAddr;

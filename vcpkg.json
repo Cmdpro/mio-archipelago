@@ -1,5 +1,8 @@
 {
   "dependencies": [
+    "ixwebsocket",
+    "jsoncpp",
+    "nlohmann-json",
     "polyhook2"
   ]
 }

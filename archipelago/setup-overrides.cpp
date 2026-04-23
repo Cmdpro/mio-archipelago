@@ -4,69 +4,48 @@
 #include "loot-overrides.h"
 #include <map>
 
-void SetupOverrides(std::map<std::string, std::string> map) {
+void AddHasOverride(const char* id, const char* method) {
+	AddHasOverride(id, CallbackOverride(method, (std::string("ARCHIPELAGO_") + std::string(id)).c_str()));
+}
+void AddLootOverride(const char* id, const char* method) {
+	AddLootOverride(id, CallbackOverride(method, (std::string("ARCHIPELAGO_") + std::string(id)).c_str()));
+}
+
+void SetupOverrides() {
 	const char* input;
 	const char* output;
 
 	// HOOK
-	input = "UNLOCK:HOOK";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddHasOverride(input, CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", output));
-		AddLootOverride(input, CallbackOverride("public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddHasOverride("UNLOCK:HOOK", "public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)");
+	AddLootOverride("UNLOCK:HOOK", "public: void __cdecl GW_tuto_hook::update_GW_tuto_hook(void)");
+	AddHasOverride("UNLOCK:HOOK", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 
 	// HIT_RECHARGE
-	input = "UNLOCK:HIT_RECHARGE";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddHasOverride(input, CallbackOverride("public: void __cdecl GA_manareset::update_hacker_manareset(void)", output));
-		AddLootOverride(input, CallbackOverride("public: void __cdecl GA_manareset::update_hacker_manareset(void)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddHasOverride("UNLOCK:HIT_RECHARGE", "public: void __cdecl GA_manareset::update_hacker_manareset(void)");
+	AddLootOverride("UNLOCK:HIT_RECHARGE", "public: void __cdecl GA_manareset::update_hacker_manareset(void)");
+	AddHasOverride("UNLOCK:HIT_RECHARGE", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 
 	// BLOCK
-	input = "UNLOCK:BLOCK";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddHasOverride(input, CallbackOverride("public: void __cdecl LQ_block_hacker::update_LQ_block_hacker(void)", output));
-		AddLootOverride(input, CallbackOverride("public: void __cdecl LQ_block_hacker::update_LQ_block_hacker(void)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddHasOverride("UNLOCK:BLOCK", "public: void __cdecl LQ_block_hacker::update_LQ_block_hacker(void)");
+	AddLootOverride("UNLOCK:BLOCK", "public: void __cdecl LQ_block_hacker::update_LQ_block_hacker(void)");
+	AddHasOverride("UNLOCK:BLOCK", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 
 	// GLIDE
-	input = "UNLOCK:GLIDE";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddHasOverride(input, CallbackOverride("public: void __cdecl GA_bou::update_hacker_glide(void)", output));
-		AddLootOverride(input, CallbackOverride("public: void __cdecl GA_bou::update_hacker_glide(void)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddHasOverride("UNLOCK:GLIDE", "public: void __cdecl GA_bou::update_hacker_glide(void)");
+	AddLootOverride("UNLOCK:GLIDE", "public: void __cdecl GA_bou::update_hacker_glide(void)");
+	AddHasOverride("UNLOCK:GLIDE", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 
 	// SPIDER
-	input = "UNLOCK:SPIDER";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddHasOverride(input, CallbackOverride("public: void __cdecl LQ_city_hacker::update_TW_mid_hacker(void)", output));
-		AddLootOverride(input, CallbackOverride("public: void __cdecl LQ_city_hacker::update_TW_mid_hacker(void)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddHasOverride("UNLOCK:SPIDER", "public: void __cdecl LQ_city_hacker::update_TW_mid_hacker(void)");
+	AddLootOverride("UNLOCK:SPIDER", "public: void __cdecl LQ_city_hacker::update_TW_mid_hacker(void)");
+	AddHasOverride("UNLOCK:SPIDER", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 
 	// ORB_SHOOT
-	input = "UNLOCK:ORB_SHOOT";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddHasOverride(input, CallbackOverride("public: void __cdecl GW_tuto_orbshoot::update(struct Node2 *)", output));
-		AddLootOverride(input, CallbackOverride("public: void __cdecl GW_tuto_orbshoot::update(struct Node2 *)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddHasOverride("UNLOCK:ORB_SHOOT", "public: void __cdecl GW_tuto_orbshoot::update(struct Node2 *)");
+	AddLootOverride("UNLOCK:ORB_SHOOT", "public: void __cdecl GW_tuto_orbshoot::update(struct Node2 *)");
+	AddHasOverride("UNLOCK:ORB_SHOOT", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 
 	// SPIDER_GOO
-	input = "UNLOCK:SPIDER_GOO";
-	if (map.contains(input)) {
-		output = map[std::string(input)].c_str();
-		AddLootOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-		AddHasOverride(input, CallbackOverride("public: void __cdecl Npc_node::update_hacker(struct Node2 *)", output));
-	}
+	AddLootOverride("UNLOCK:SPIDER_GOO", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
+	AddHasOverride("UNLOCK:SPIDER_GOO", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 }

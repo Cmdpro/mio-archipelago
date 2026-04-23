@@ -4,6 +4,7 @@
 #include "polyhook2/Detour/NatDetour.hpp"
 #include "mio-archipelago.h"
 #include "loot-overrides.h"
+#include "Archipelago.h"
 
 uintptr_t loot_trampoline = NULL;
 uintptr_t mio_has_trampoline = NULL;
@@ -18,6 +19,7 @@ NOINLINE void __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* ite
             if (returnAddr >= i.methodAddr && returnAddr <= i.methodAddr + i.methodSize) {
                 ModAPI::SaveData::GameString str = ModAPI::SaveData::GameString((char*)i.replaceWith.c_str());
                 id = &str;
+                AP_SendItem(GetIdForLocation(i.replaceWith));
             }
         }
     }
