@@ -49,7 +49,8 @@ NOINLINE void __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* it
 void* insideGlitchAddr;
 void* exitGlitchAddr;
 NOINLINE void __cdecl GlitchStateUpdateHook() {
-    if (ModAPI::Util::ReadMemoryTyped<uint8_t>(insideGlitchAddr)) {
+    std::string zoneId = std::string(ModAPI::Util::GetCurrentZoneId());
+    if (zoneId != std::string("GW_intro_jump_P1") && ModAPI::Util::ReadMemoryTyped<uint8_t>(insideGlitchAddr)) {
         ModAPI::Util::CallAssembly<void>(exitGlitchAddr, ModAPI::Addresses::g_GameAddr);
     }
     typedef int func();
