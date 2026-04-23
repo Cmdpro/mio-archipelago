@@ -10,7 +10,7 @@ uintptr_t loot_trampoline = NULL;
 uintptr_t mio_has_trampoline = NULL;
 uintptr_t glitch_state_update_trampoline = NULL;
 
-NOINLINE void __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* item_id, uint32_t count) {
+NOINLINE auto __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* item_id, uint32_t count) {
     ModAPI::SaveData::GameString* id = item_id;
     std::map<std::string, std::list<CallbackOverride>> lootOverrides = GetHasOverrides();
     if (lootOverrides.count(std::string(id->data))) {
@@ -26,10 +26,10 @@ NOINLINE void __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* ite
 
     typedef int func(uintptr_t, ModAPI::SaveData::GameString*, uint32_t);
     func* trampoline = (func*)(loot_trampoline);
-    int i = trampoline(game, id, count);
+    return trampoline(game, id, count);
 }
 
-NOINLINE void __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* item_id) {
+NOINLINE bool __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* item_id) {
     ModAPI::SaveData::GameString* id = item_id;
     std::map<std::string, std::list<CallbackOverride>> hasOverrides = GetHasOverrides();
     if (hasOverrides.count(std::string(id->data))) {
@@ -44,8 +44,9 @@ NOINLINE void __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* it
 
     typedef int func(uintptr_t, ModAPI::SaveData::GameString*);
     func* trampoline = (func*)(mio_has_trampoline);
-    int i = trampoline(mio, id);
+    return trampoline(mio, id);
 }
+
 void* insideGlitchAddr;
 void* exitGlitchAddr;
 NOINLINE void __cdecl GlitchStateUpdateHook() {
@@ -55,7 +56,7 @@ NOINLINE void __cdecl GlitchStateUpdateHook() {
     }
     typedef int func();
     func* trampoline = (func*)(glitch_state_update_trampoline);
-    int i = trampoline();
+    trampoline();
 }
 
 void InitializeHooks() {
