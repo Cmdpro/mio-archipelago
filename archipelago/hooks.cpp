@@ -10,12 +10,13 @@ uintptr_t loot_trampoline = NULL;
 uintptr_t mio_has_trampoline = NULL;
 uintptr_t glitch_state_update_trampoline = NULL;
 
-NOINLINE auto __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* item_id, uint32_t count) {
+NOINLINE void* __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* item_id, int32_t count) {
     ModAPI::SaveData::GameString* id = item_id;
-    std::map<std::string, std::list<CallbackOverride>> lootOverrides = GetHasOverrides();
-    if (lootOverrides.count(std::string(id->data))) {
+    std::map<std::string, std::list<CallbackOverride>> lootOverrides = GetLootOverrides();
+    std::string dataStr = std::string(id->data);
+    if (lootOverrides.find(dataStr) != lootOverrides.end()) {
         uintptr_t returnAddr = (uintptr_t)_ReturnAddress();
-        for (CallbackOverride i : lootOverrides[std::string(id->data)]) {
+        for (CallbackOverride i : lootOverrides[dataStr]) {
             if (returnAddr >= i.methodAddr && returnAddr <= i.methodAddr + i.methodSize) {
                 ModAPI::SaveData::GameString str = ModAPI::SaveData::GameString((char*)i.replaceWith.c_str());
                 id = &str;
@@ -24,17 +25,18 @@ NOINLINE auto __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* ite
         }
     }
 
-    typedef int func(uintptr_t, ModAPI::SaveData::GameString*, uint32_t);
+    typedef void* func(uintptr_t, ModAPI::SaveData::GameString*, int32_t);
     func* trampoline = (func*)(loot_trampoline);
     return trampoline(game, id, count);
 }
 
-NOINLINE bool __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* item_id) {
+NOINLINE uint8_t __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* item_id) {
     ModAPI::SaveData::GameString* id = item_id;
     std::map<std::string, std::list<CallbackOverride>> hasOverrides = GetHasOverrides();
-    if (hasOverrides.count(std::string(id->data))) {
+    std::string dataStr = std::string(id->data);
+    if (hasOverrides.find(dataStr) != hasOverrides.end()) {
         uintptr_t returnAddr = (uintptr_t)_ReturnAddress();
-        for (CallbackOverride i : hasOverrides[std::string(id->data)]) {
+        for (CallbackOverride i : hasOverrides[dataStr]) {
             if (returnAddr >= i.methodAddr && returnAddr <= i.methodAddr + i.methodSize) {
                 ModAPI::SaveData::GameString str = ModAPI::SaveData::GameString((char*)i.replaceWith.c_str());
                 id = &str;
@@ -42,7 +44,7 @@ NOINLINE bool __cdecl MioHasHook(uintptr_t mio, ModAPI::SaveData::GameString* it
         }
     }
 
-    typedef int func(uintptr_t, ModAPI::SaveData::GameString*);
+    typedef uint8_t func(uintptr_t, ModAPI::SaveData::GameString*);
     func* trampoline = (func*)(mio_has_trampoline);
     return trampoline(mio, id);
 }
@@ -54,7 +56,7 @@ NOINLINE void __cdecl GlitchStateUpdateHook() {
     if (zoneId != std::string("GW_intro_jump_P1") && ModAPI::Util::ReadMemoryTyped<uint8_t>(insideGlitchAddr)) {
         ModAPI::Util::CallAssembly<void>(exitGlitchAddr, ModAPI::Addresses::g_GameAddr);
     }
-    typedef int func();
+    typedef void func();
     func* trampoline = (func*)(glitch_state_update_trampoline);
     trampoline();
 }
