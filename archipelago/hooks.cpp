@@ -9,6 +9,7 @@
 uintptr_t loot_trampoline = NULL;
 uintptr_t mio_has_trampoline = NULL;
 uintptr_t glitch_state_update_trampoline = NULL;
+uintptr_t stringfv_trampoline = NULL;
 
 NOINLINE void* __cdecl LootHook(uintptr_t game, ModAPI::SaveData::GameString* item_id, int32_t count) {
     ModAPI::SaveData::GameString* id = item_id;
@@ -60,6 +61,22 @@ NOINLINE void __cdecl GlitchStateUpdateHook() {
     func* trampoline = (func*)(glitch_state_update_trampoline);
     trampoline();
 }
+NOINLINE ModAPI::SaveData::GameString* __cdecl StringfvHook(ModAPI::SaveData::GameString* __return, char const* fmt, void* args) {
+    typedef ModAPI::SaveData::GameString* func(ModAPI::SaveData::GameString* , char const*, void*);
+    func* trampoline = (func*)(stringfv_trampoline);
+
+    if (!fmt) {
+        return trampoline(__return, fmt, args);
+    }
+    std::string fmtStr = std::string(fmt);
+    std::string fmtNew = fmtStr;
+    if (fmtStr == "slot_%.save" || fmtStr == "slot_%_bck") {
+        fmtNew = "archipelago_" + fmtStr;
+        ModAPI::Util::LogMessage((char*)"a", fmt);
+        return trampoline(__return, fmtNew.c_str(), args);
+    }
+    return trampoline(__return, fmt, args);
+}
 
 void InitializeHooks() {
     uintptr_t baseAddr = ModAPI::Addresses::g_BaseAddr;
@@ -75,6 +92,10 @@ void InitializeHooks() {
     uintptr_t glitchStateUpdateAddr = baseAddr + ModAPI::Util::GetMethodOffset("void __cdecl glitch_state_update(void)");
     static PLH::NatDetour glitch_state_update_hook_detour = PLH::NatDetour(glitchStateUpdateAddr, (uintptr_t)GlitchStateUpdateHook, &glitch_state_update_trampoline);
     glitch_state_update_hook_detour.hook();
+
+    uintptr_t stringfvAddr = baseAddr + ModAPI::Util::GetMethodOffset("struct String __cdecl stringfv(char const *,struct Array<struct Val_ref> const &)");
+    static PLH::NatDetour stringfv_hook_detour = PLH::NatDetour(stringfvAddr, (uintptr_t)StringfvHook, &stringfv_trampoline);
+    stringfv_hook_detour.hook();
 
     exitGlitchAddr = (void*)(baseAddr + ModAPI::Util::GetMethodOffset("public: void __cdecl Game::exit_glitch(void)"));
     insideGlitchAddr = (void*)((uintptr_t)ModAPI::Addresses::g_GameAddr + ModAPI::Util::GetVariableOffset("Game", "glitch") + ModAPI::Util::GetVariableOffset("Game::Glitch", "_inside"));
