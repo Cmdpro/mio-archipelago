@@ -10,6 +10,14 @@ void RegisterHas(const char* id, const char* method) {
 void RegisterLoot(const char* id, const char* method) {
 	AddLootOverride(id, CallbackOverride(method, (std::string("ARCHIPELAGO_") + std::string(id)).c_str()));
 }
+void RegisterLootNode(const char* id) {
+	RegisterHas(id, "public: void __cdecl Game::update_loot(void)");
+	RegisterLoot(id, "public: void __cdecl Game::update_loot(void)");
+}
+void RegisterChest(const char* id) {
+	RegisterHas(id, "public: static void __cdecl Chest2_node::activate(struct Node2 *,struct Chest2_node *)");
+	RegisterLootNode(id);
+}
 
 void SetupOverrides() {
 	// HOOK
@@ -45,4 +53,7 @@ void SetupOverrides() {
 	// SPIDER_GOO
 	RegisterLoot("UNLOCK:SPIDER_GOO", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
 	RegisterHas("UNLOCK:SPIDER_GOO", "public: void __cdecl Npc_node::update_hacker(struct Node2 *)");
+
+	// TRINKETS
+	RegisterChest("TRINKET:SHIELD_INC");
 }

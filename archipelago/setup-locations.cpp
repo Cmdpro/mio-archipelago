@@ -2,6 +2,7 @@
 #include "mio-modding-api.h"
 #include <string>
 #include <vector>
+#include <Archipelago.h>
 
 std::map<int64_t, std::string> idsToLocation;
 std::map<std::string, int64_t> locationToIds;
@@ -26,6 +27,9 @@ void SetupLocationIds() {
     AddLocation(4, "ARCHIPELAGO_UNLOCK:SPIDER");
     AddLocation(5, "ARCHIPELAGO_UNLOCK:ORB_SHOOT");
     AddLocation(6, "ARCHIPELAGO_UNLOCK:SPIDER_GOO");
+
+    //TRINKETS
+    AddLocation(7, "ARCHIPELAGO_TRINKET:SHIELD_INC");
 }
 
 void ResetAllLocations() {

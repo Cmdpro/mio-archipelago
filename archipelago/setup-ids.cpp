@@ -27,7 +27,9 @@ void SetupItemIds() {
     AddItem(5, "UNLOCK:ORB_SHOOT");
     AddItem(6, "UNLOCK:SPIDER_GOO");
 
-    AddItem(7, "ARCHIPELAGO_SPECIAL:RANDOM_NACRE");
+    AddItem(7, "TRINKET:SHIELD_INC");
+
+    AddItem(8, "ARCHIPELAGO_SPECIAL:RANDOM_NACRE");
 }
 
 void ResetAllItems() {
